@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h1><%= @recipe.name %></h1>
+      <p><strong>Preparation Time:</strong> <%= @recipe.preparation_time %></p>
+      <p><strong>Cooking Time:</strong> <%= @recipe.cooking_time %></p>
+      <p><strong>Description:</strong> <%= @recipe.description %></p>
+
+      <div class="form-group">
+        <strong>Public:</strong>
+        <label class="switch">
+          <%= form_with(model: @recipe, local: true) do |form| %>
+            <%= form.check_box :public, { checked: @recipe.public, class: 'form-check-input', id: 'public-toggle' } %>
+          <% end %>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <p><strong>User:</strong> <%= @recipe.user.name %></p>
+
+      <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'btn btn-warning' %>
+      <%= link_to 'Back', recipes_path, class: 'btn btn-secondary' %>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h2>Foods</h2>
+        </div>
+
+        <div class="card-body">
+          <% if @recipe.foods.any? %>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recipe.recipe_foods.each do |recipe_food| %>
+                  <tr>
+                    <td><%= recipe_food.food.name %></td>
+                    <td><%= recipe_food.quantity %></td>
+                    <td>
+                      <%= link_to 'Edit', edit_recipe_food_path(recipe_food), class: 'btn btn-warning btn-sm' %> |
+                      <%= link_to 'Destroy', recipe_food, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p>No foods added to this recipe.</p>
+          <% end %>
+
+          <%= link_to 'Add Ingredient', new_recipe_food_path(@recipe), class: 'btn btn-success btn-block mt-3' %>
+          <%= link_to 'Generate Shopping List', generate_shopping_list_recipe_path(@recipe), class: 'btn btn-primary btn-block mt-3' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const publicToggle = document.getElementById("public-toggle");
+
+    publicToggle.addEventListener("change", function () {
+      const publicStatus = this.checked;
+      updatePublicStatus(publicStatus);
+    });
+
+    function updatePublicStatus(publicStatus) {
+      // Send an AJAX request to update the public status in the backend
+      const recipeId = <%= @recipe.id %>;
+      const url = `/recipes/${recipeId}/update_public_status?public=${publicStatus}`;
+
+      fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': Rails.csrfToken()
+        },
+        credentials: 'same-origin'
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Optionally, update the view or provide feedback to the user
+        console.log(data);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  });
+</script>
