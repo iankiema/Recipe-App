@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[show edit update destroy]
+  before_action :set_user, only: %i[show edit update]
+  before_action :authenticate_user!, except: [:destroy]
+  skip_before_action :set_user, only: [:destroy]
 
   def show
     # Show user profile
@@ -21,14 +23,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # def destroy
-  #   @user = @user.id
-  #   @user.destroy
-  #   redirect_to root_path, notice: 'Your account has been successfully deleted.'
-  # end
-
   def destroy
-    current_user.destroy # Assuming you are using Devise for authentication
+    @user = current_user
+    @user&.destroy # Assuming you are using Devise for authentication
     sign_out # This signs out the current user
     redirect_to root_path, notice: 'Your account has been successfully deleted.'
   end
