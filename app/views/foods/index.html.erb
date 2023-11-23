@@ -19,9 +19,7 @@
           <td><%= food.measurement_unit %></td>
           <td><%= number_to_currency(food.price) %></td>
           <td>
-            <%= turbo_frame_tag "foods" do %>
-                    <%= link_to 'Delete', food, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm', 'turbo-frame': 'foods' %>
-            <% end %>
+            <%= button_to 'Delete', food, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
           </td>
         </tr>
       <% end %>

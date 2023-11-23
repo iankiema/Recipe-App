@@ -1,8 +1,10 @@
 class FoodsController < ApplicationController
+  include ActionView::Helpers::NumberHelper
+
   before_action :set_food, only: %i[show edit update destroy]
 
   def index
-    @foods = Food.all
+    @foods = current_user.foods
   end
 
   def show; end
@@ -12,11 +14,11 @@ class FoodsController < ApplicationController
   end
 
   def create
-    @food = Food.new(food_params)
-
+    @food = current_user.foods.new(food_params)
     if @food.save
-      redirect_to @food, notice: 'Food was successfully created.'
+      redirect_to foods_url, notice: 'Food item was successfully created.'
     else
+      flash.now[:alert] = 'Food item could not be created.'
       render :new
     end
   end
@@ -32,11 +34,9 @@ class FoodsController < ApplicationController
   end
 
   def destroy
+    @food = Food.find(params[:id])
     @food.destroy
-    respond_to do |format|
-      format.html { redirect_to foods_url, notice: 'Food was successfully destroyed.' }
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@food) }
-    end
+    redirect_to foods_url, notice: 'Food item was successfully deleted.'
   end
 
   private

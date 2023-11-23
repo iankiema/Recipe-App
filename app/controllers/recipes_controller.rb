@@ -1,14 +1,15 @@
 class RecipesController < ApplicationController
   include ActionView::Helpers::NumberHelper
 
-  before_action :set_recipe, only: %i[show edit update destroy]
+  before_action :set_recipe, only: %i[show edit update destroy generate_shopping_list]
 
   def index
     @recipes = Recipe.all
   end
 
   def show
-    @recipe = Recipe.find(params[:id])
+    @recipe = Recipe.includes(:foods).find(params[:id])
+    @foods = @recipe.foods
   end
 
   def new
@@ -40,11 +41,12 @@ class RecipesController < ApplicationController
   end
 
   def destroy
-    if @recipe.user == current_user
-      @recipe.destroy
-      redirect_to recipes_url, notice: 'Recipe was successfully destroyed.'
+    @recipe = current_user.recipes.find(params[:id])
+
+    if @recipe.destroy
+      redirect_to recipes_path, notice: 'Recipe deleted successfully'
     else
-      redirect_to recipes_url, alert: 'You can only destroy your own recipes.'
+      redirect_to recipes_path, notice: 'Recipe cannot delete'
     end
   end
 
@@ -54,14 +56,52 @@ class RecipesController < ApplicationController
     render json: { status: 'success' }
   end
 
+  def generate_shopping_list
+    @foods = current_user.foods
+    update_food_quantities
+    filter_negative_quantities
+    calculate_total
+  rescue StandardError => e
+    puts "DEBUG: An error occurred - #{e.message}"
+    puts e.backtrace
+  end
+
   private
 
+  def update_food_quantities
+    current_user.recipes.each do |recipe|
+      update_food_quantity_for_recipe(recipe)
+    end
+  end
+
+  def update_food_quantity_for_recipe(recipe)
+    recipe.recipe_foods.includes(:food).each do |recipe_food|
+      food = recipe_food.food
+      test = @foods.find { |f| f.name == food.name }
+
+      update_food_quantity(test, recipe_food) if test
+    end
+  end
+
+  def update_food_quantity(food, recipe_food)
+    food.quantity = [0, food.quantity - recipe_food.quantity].max
+  end
+
+  def filter_negative_quantities
+    @foods.select! { |food| food.quantity.negative? }
+    @foods.each { |food| food.quantity *= -1 }
+  end
+
+  def calculate_total
+    @total = @foods.sum { |food| food.price * food.quantity }
+  end
+
   def set_recipe
-    @recipe = if params[:id] == 'public_recipes'
-                nil
-              else
-                Recipe.find(params[:id])
-              end
+    @recipe = @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
+                          nil
+                        else
+                          Recipe.find(params[:id])
+                        end
   end
 
   def recipe_params

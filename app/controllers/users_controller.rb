@@ -21,8 +21,15 @@ class UsersController < ApplicationController
     end
   end
 
+  # def destroy
+  #   @user = @user.id
+  #   @user.destroy
+  #   redirect_to root_path, notice: 'Your account has been successfully deleted.'
+  # end
+
   def destroy
-    @user.destroy
+    current_user.destroy # Assuming you are using Devise for authentication
+    sign_out # This signs out the current user
     redirect_to root_path, notice: 'Your account has been successfully deleted.'
   end
 

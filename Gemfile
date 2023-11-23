@@ -72,5 +72,6 @@ group :test do
 end
 
 gem 'bootstrap-sass'
+gem 'cancancan'
 gem 'devise'
 gem 'turbolinks'
