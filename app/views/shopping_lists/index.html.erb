@@ -1,0 +1,27 @@
+<div class="container my-4">
+  <h1 class="display-4">General Shopping List</h1>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Food</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @shopping_list_items.each do |food| %>
+        <tr>
+          <td><%= food.name %></td>
+          <td><%= food.quantity %></td>
+          <td><%= number_to_currency(food.price) %></td>
+          <td><%= number_to_currency(food.quantity * food.price) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <p class="lead">Amount of food to buy: <%= @total_count %></p>
+  <p class="lead">Total Value of food needed: <%= number_to_currency(@total_price) %></p>
+</div>
