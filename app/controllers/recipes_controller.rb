@@ -27,7 +27,6 @@ class RecipesController < ApplicationController
   end
 
   def public_recipes
-    # @public_recipes = Recipe.where(public: true)
     @public_recipes = Recipe.public_recipes.where.not(user: current_user)
   end
 
@@ -103,14 +102,6 @@ class RecipesController < ApplicationController
   def calculate_total
     @total = @foods.sum { |food| food.price * food.quantity }
   end
-
-  # def set_recipe
-  #   @recipe = @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
-  #                         nil
-  #                       else
-  #                         Recipe.find(params[:id])
-  #                       end
-  # end
 
   def set_recipe
     @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
