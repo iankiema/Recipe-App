@@ -51,8 +51,6 @@ group :development, :test do
   gem 'debug', platforms: %i[mri windows]
 
   gem 'rspec-rails'
-
-  gem 'will_paginate'
 end
 
 group :development do
@@ -75,10 +73,5 @@ end
 
 gem 'bootstrap-sass'
 gem 'cancancan'
-
-gem 'database_cleaner'
 gem 'devise'
-
-gem 'rails-controller-testing'
-
 gem 'turbolinks'
