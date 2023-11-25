@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :current_user
-
+  # helper_method :current_user
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -12,9 +11,9 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: attributes)
   end
 
-  private
+  # private
 
-  def after_sign_up_path_for(_resource)
-    edit_user_registration_path
-  end
+  # def after_sign_up_path_for(_resource)
+  #   edit_user_registration_path
+  # end
 end

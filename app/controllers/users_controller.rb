@@ -1,10 +1,21 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[show edit update]
-  before_action :authenticate_user!, except: [:destroy]
-  skip_before_action :set_user, only: [:destroy]
+  before_action :set_user, only: %i[show edit update destroy]
+  # before_action :authenticate_user!, except: [:destroy]
+  # skip_before_action :set_user, only: [:destroy]
+
+  def index
+    @users = User.all
+  end
+
+  def new
+    @user = User.new
+  end
 
   def show
-    # Show user profile
+    return unless @user.nil? || @user == current_user
+
+    # Handle sign-out scenario
+    redirect_to new_user_session_path, notice: 'Signed out successfully.'
   end
 
   def edit
@@ -26,14 +37,20 @@ class UsersController < ApplicationController
   def destroy
     @user = current_user
     @user&.destroy # Assuming you are using Devise for authentication
-    sign_out # This signs out the current user
-    redirect_to root_path, notice: 'Your account has been successfully deleted.'
+    # sign_out # This signs out the current user
+    redirect_to users_url, notice: 'Your account has been successfully deleted.'
   end
 
   private
 
   def set_user
-    @user = User.find(params[:id])
+    if params[:id] == 'sign_out'
+      # No need to find a user when signing out
+      sign_out(current_user) if current_user
+      @user = nil
+    else
+      @user = User.find(params[:id])
+    end
   end
 
   def user_params

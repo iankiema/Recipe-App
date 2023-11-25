@@ -13,6 +13,9 @@ Rails.application.routes.draw do
       get :public_recipes
     end
     member do
+            patch 'toggle_public_status'
+    end
+    member do
       get 'generate_shopping_list'
     end
     patch 'update_public_status', on: :member

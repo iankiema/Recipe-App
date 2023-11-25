@@ -1,25 +1,24 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
       <h1><%= @recipe.name %></h1>
       <p><strong>Preparation Time:</strong> <%= @recipe.preparation_time %></p>
       <p><strong>Cooking Time:</strong> <%= @recipe.cooking_time %></p>
       <p><strong>Description:</strong> <%= @recipe.description %></p>
 
       <div class="form-group">
-        <strong>Public:</strong>
-        <label class="switch">
-          <%= form_with(model: @recipe, local: true) do |form| %>
-            <%= form.check_box :public, { checked: @recipe.public, class: 'form-check-input', id: 'public-toggle' } %>
-          <% end %>
-          <span class="slider round"></span>
-        </label>
+        <%= form_with model: @recipe, local: true do |form| %>
+          <%= form.check_box :public, { checked: @recipe.public, class: 'form-check-input', id: 'public-toggle' } %>
+          <%= form.label :public, class: 'form-check-label', for: 'public-toggle' %>
+
+          <%= button_to 'Toggle Public Recipe Status', toggle_public_status_recipe_path(@recipe), method: :patch, remote: true, form: { class: 'd-inline' }, class: 'btn btn-primary' %>
+        <% end %>
       </div>
 
       <p><strong>User:</strong> <%= @recipe.user.name %></p>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="card">
         <div class="card-header">
           <h2>Foods</h2>
@@ -32,6 +31,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Quantity</th>
+                  <th>Value</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -40,6 +40,7 @@
                   <tr>
                     <td><%= recipe_food.food.name %></td>
                     <td><%= recipe_food.quantity %></td>
+                    <td>$ <%= recipe_food.food.price * recipe_food.quantity %></td>
                     <td>
                       <%= link_to 'Edit', edit_recipe_recipe_food_path(@recipe, recipe_food), class: 'btn btn-warning btn-sm' %> |
                       <%= button_to 'Destroy', recipe_recipe_food_path(@recipe, recipe_food), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
@@ -56,14 +57,13 @@
     </div>
   </div>
 
-  <!-- Move your buttons outside the row -->
   <div class="row mt-3">
     <div class="col-md-8">
       <%= link_to 'Edit', edit_recipe_path(@recipe), class: 'btn btn-warning' %>
       <%= link_to 'Back', recipes_path, class: 'btn btn-secondary' %>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 mt-2">
       <div class="card">
         <div class="card-header">
           <h2>Actions</h2>
@@ -78,34 +78,4 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const publicToggle = document.getElementById("public-toggle");
 
-    publicToggle.addEventListener("change", function () {
-      const publicStatus = this.checked;
-      updatePublicStatus(publicStatus);
-    });
-
-    function updatePublicStatus(publicStatus) {
-      // Send an AJAX request to update the public status in the backend
-      const recipeId = <%= @recipe.id %>;
-      const url = `/recipes/${recipeId}/update_public_status?public=${publicStatus}`;
-
-      fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': Rails.csrfToken()
-        },
-        credentials: 'same-origin'
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Optionally, update the view or provide feedback to the user
-        console.log(data);
-      })
-      .catch(error => console.error('Error:', error));
-    }
-  });
-</script>

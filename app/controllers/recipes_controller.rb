@@ -27,7 +27,8 @@ class RecipesController < ApplicationController
   end
 
   def public_recipes
-    @public_recipes = Recipe.where(public: true)
+    # @public_recipes = Recipe.where(public: true)
+    @public_recipes = Recipe.public_recipes.where.not(user: current_user)
   end
 
   def edit; end
@@ -54,6 +55,13 @@ class RecipesController < ApplicationController
     @recipe = Recipe.find(params[:id])
     @recipe.update(public: params[:public])
     render json: { status: 'success' }
+  end
+
+  def toggle_public_status
+    @recipe = Recipe.find(params[:id])
+    @recipe.toggle_public_status_and_visibility
+
+    redirect_to @recipe, notice: 'Recipe public status updated successfully.'
   end
 
   def generate_shopping_list
@@ -96,12 +104,23 @@ class RecipesController < ApplicationController
     @total = @foods.sum { |food| food.price * food.quantity }
   end
 
+  # def set_recipe
+  #   @recipe = @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
+  #                         nil
+  #                       else
+  #                         Recipe.find(params[:id])
+  #                       end
+  # end
+
   def set_recipe
-    @recipe = @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
-                          nil
-                        else
-                          Recipe.find(params[:id])
-                        end
+    @recipe = if params[:id] == 'public_recipes' || params[:id].nil?
+                Recipe.public_recipes.where.not(user: current_user).find(params[:id])
+              else
+                current_user.recipes.find(params[:id])
+              end
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = 'Recipe not found.'
+    redirect_to recipes_path
   end
 
   def recipe_params
