@@ -37,14 +37,14 @@
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href=#>Ruby on Rails</a></li>
+    <li><a href="https://rubyonrails.org/">Ruby on Rails</a></li>
   </ul>
 </details>
 
 <details>
   <summary>Server</summary>
   <ul>
-    <li><a href=#>Localhost</a></li>
+    <li><a href="http://localhost:3000/">Localhost</a></li>
   </ul>
 </details>
 
@@ -112,7 +112,6 @@ Run: Rspec
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- FUTURE FEATURES -->
 
 ## 🔭 Future Features <a name="future-features"></a>
 

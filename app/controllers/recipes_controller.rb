@@ -27,8 +27,7 @@ class RecipesController < ApplicationController
   end
 
   def public_recipes
-    # @public_recipes = Recipe.where(public: true)
-    @public_recipes = Recipe.public_recipes.where.not(user: current_user)
+    @public_recipes = Recipe.includes(:user, :recipe_foods).where(public: true).order('created_at DESC')
   end
 
   def edit; end
