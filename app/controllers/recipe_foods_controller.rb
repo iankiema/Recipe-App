@@ -1,5 +1,3 @@
-# app/controllers/recipe_foods_controller.rb
-
 class RecipeFoodsController < ApplicationController
   before_action :set_recipe
   before_action :set_recipe_food, only: %i[show edit update destroy]
