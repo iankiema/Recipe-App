@@ -1,0 +1,17 @@
+<div class="container">
+  <h1 class="my-4"><%= @food.name %></h1>
+
+  <dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9"><%= @food.name %></dd>
+
+    <dt class="col-sm-3">Measurement Unit</dt>
+    <dd class="col-sm-9"><%= @food.measurement_unit %></dd>
+
+    <dt class="col-sm-3">Unit Price</dt>
+    <dd class="col-sm-9"><%= number_to_currency(@food.price) %></dd>
+  </dl>
+
+  <%= link_to 'Edit', edit_food_path(@food), class: 'btn btn-primary' %>
+  <%= link_to 'Back', foods_path, class: 'btn btn-secondary' %>
+</div>
