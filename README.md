@@ -48,13 +48,6 @@
   </ul>
 </details>
 
-<details>
-<summary>PostGre SQL</summary>
-  <ul>
-    <li><a href=#>N/A</a></li>
-  </ul>
-</details>
-
 ### Key Features <a name="key-features"></a>
 
 - **[App for blog, create post, add likes and comments]**
@@ -100,7 +93,7 @@ To run the project, execute the following command:
 
 To run tests, run the following command: Install through : gem install rspec
 
-Run: ***Not Available for now***
+Run: Rspec
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
