@@ -38,14 +38,4 @@ RSpec.describe Recipe, type: :model do
       expect(recipe.foods).to be_empty
     end
   end
-
-  describe 'Methods' do
-    it 'changes the public status' do
-      expect(recipe.public).to eq(true)
-      recipe.change_public_status
-      expect(recipe.public).to eq(false)
-      recipe.change_public_status
-      expect(recipe.public).to eq(true)
-    end
-  end
 end

@@ -1,12 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  describe 'when user is signed in' do
-    let(:user) { User.create(name: 'John') }
-    it 'displays the welcome message' do
-      sign_in user
-      get root_path
-      expect(response.body).to include("Welcome #{user.name}")
+  describe 'validations' do
+    it 'should validate presence of name' do
+      user = User.new(name: '')
+      expect(user.valid?).to be false
+      expect(user.errors[:name]).to include("can't be blank")
+    end
+  end
+  describe 'associations' do
+    it 'should have many foods and recipes' do
+      user = User.reflect_on_association(:foods)
+      expect(user.macro).to eq(:has_many)
+      user = User.reflect_on_association(:recipes)
+      expect(user.macro).to eq(:has_many)
     end
   end
 end
